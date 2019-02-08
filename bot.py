@@ -8,7 +8,7 @@ for cogfile in os.listdir("cogs"):
         extensions.append(cogfile[:-3])
 
 
-client = commands.Bot(command_prefix='!', case_insenghjgjsitive=True)
+client = commands.Bot(command_prefix='!')
 
 #On connection
 @client.event
