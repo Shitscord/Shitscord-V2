@@ -9,6 +9,7 @@ for cogfile in os.listdir("cogs"):
 
 
 client = commands.Bot(command_prefix='!')
+testvar=1
 
 #On connection
 @client.event
@@ -40,5 +41,5 @@ if __name__ == '__main__':
         except Exception as error:
             print('Cannot load:', extension, error)
 
-client.run(tokens.discord)
+client.run(tokens.discordToken)
 

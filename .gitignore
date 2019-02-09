@@ -105,3 +105,4 @@ venv.bak/
 tokens.py
 
 .vscode
+cogs/cogfuncs/prawCredentials.py
