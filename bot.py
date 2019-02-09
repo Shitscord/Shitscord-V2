@@ -6,7 +6,6 @@ extensions=[]
 for cogfile in os.listdir("cogs"):
     if str(cogfile).endswith(".py"):
         extensions.append(cogfile[:-3])
-
 client = commands.Bot(command_prefix='!')
 testvar=1
 

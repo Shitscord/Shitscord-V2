@@ -5,7 +5,7 @@ async def prawImgFind(prawDepInj,subreddit="all",sortby="top",srange="100",retri
     try:
         reddit.subreddits.search_by_name(subreddit, exact=True)
     except:
-        return("sr_invalid")    
+        return(1)    
 
     subGet = reddit.subreddit(subreddit)
     posts = [post for post in subGet.hot(limit=int(srange))]
@@ -19,4 +19,4 @@ async def prawImgFind(prawDepInj,subreddit="all",sortby="top",srange="100",retri
         if randomPost[-3:] in usableExt:
             return(randomPost)
         i+=1
-    return(None)
+    return(2)

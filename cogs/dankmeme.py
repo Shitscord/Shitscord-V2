@@ -10,9 +10,9 @@ class Dankmeme:
     @commands.command()
     async def dankmeme(self):
         textReturn = await prawImage.prawImgFind(prawCredentials)
-        if textReturn == "sr_invalid":
+        if textReturn == 1:
             textReturn = "`Invalid subreddit!`"
-        elif textReturn == None:
+        elif textReturn == 2:
             textReturn = "`No images could be found.`"
         await self.client.say(textReturn)
 
