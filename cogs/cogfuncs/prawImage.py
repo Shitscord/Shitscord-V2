@@ -1,18 +1,24 @@
-import praw, random
+import praw, random, os
 
-async def prawImgFind(prawDepInj,subreddit="all",sortby="top",srange="100",retries="3"):
+async def prawImgFind(subreddit="all",sortby="top",srange="100",retries="3"):
     usableExt=["jpg","peg","png","gif"]
     usableSort=["hot","new","controversial","top","rising"]
-    if sortby not in usableSort:
+
+    if sortby not in usableSort: #if not a valid sorting method
         return("no_sort")
 
-    reddit=praw.Reddit(client_id=prawDepInj.clientId, client_secret=prawDepInj.clientSecret, user_agent=prawDepInj.userAgent)
+    #setup reddit api connection
+    reddit=praw.Reddit(client_id=os.getenv("clientId"), client_secret=os.getenv("clientSecret"), user_agent=os.getenv("userAgent"))
+
+    #If no subreddit exists with name
     try:
         reddit.subreddits.search_by_name(subreddit, exact=True)
     except:
         return("no_sub")    
 
     subGet = reddit.subreddit(subreddit)
+
+    #Apply sorting method in dumb way
     if sortby=="best":
         posts = [post for post in subGet.best(limit=int(srange))]
     elif sortby=="new":
@@ -26,6 +32,7 @@ async def prawImgFind(prawDepInj,subreddit="all",sortby="top",srange="100",retri
 
     randTop = min(len(posts),int(srange))-1
 
+    #Keep picking random posts until valid image post found
     for i in range(0,int(retries)):
         randomPost = posts[random.randint(0,randTop)].url
         print(randomPost)

@@ -1,5 +1,11 @@
 from discord.ext import commands
-import discord, tokens, os
+import discord, os
+
+#Check if running in heroku with environment variables. If not, load variables from file
+if "isHeroku" not in os.environ:
+    print("Loading vars from .env")
+    from dotenv import load_dotenv
+    load_dotenv()
 
 #Loading all cog files from /cogs
 extensions=[]
@@ -22,5 +28,6 @@ if __name__ == '__main__':
         except Exception as error:
             print('Cannot load:', extension, error)
 
-client.run(tokens.discordToken)
+discordToken = os.getenv("discordToken")
+client.run(discordToken)
 

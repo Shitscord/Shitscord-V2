@@ -5,7 +5,7 @@ verify_ssl = true
 [packages]
 discord = "*"
 praw = "*"
-
+dotenv = "*"
 
 [requires]
 python_version = "3.6"

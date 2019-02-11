@@ -1,7 +1,6 @@
 import discord, random
 from discord.ext import commands
 from cogs.cogfuncs import prawImage
-from cogs.cogfuncs import prawCredentials
 
 class Dankmeme:
     def __init__(self, client):
@@ -13,7 +12,7 @@ class Dankmeme:
         danksr=["dankmemes","okbuddyretard","dogelore","blessedimages","blursedimages","bonehurtingjuice","comedyheavan","cursedcomments","hmmtodayiwill","sbubby"]
         #print(commandList)
         srfind=danksr[random.randint(0,len(danksr)-1)]
-        textReturn = await prawImage.prawImgFind(prawCredentials, subreddit=srfind)
+        textReturn = await prawImage.prawImgFind(subreddit=srfind)
         if textReturn == "no_sub":
             textReturn = "`Invalid subreddit!`"
         elif textReturn == "no_image":
