@@ -1,1 +1,1 @@
-worker: python shitscord.py
+worker: python bot.py
