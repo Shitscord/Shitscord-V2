@@ -8,7 +8,7 @@ async def prawImgFind(subreddit="all",sortby="top",srange="100",retries="3"):
         return("no_sort")
 
     #setup reddit api connection
-    reddit=praw.Reddit(client_id=os.getenv("clientId"), client_secret=os.getenv("clientSecret"), user_agent=os.getenv("userAgent"))
+    reddit=praw.Reddit(client_id=os.getenv("prawClientId"), client_secret=os.getenv("prawClientSecret"), user_agent=os.getenv("prawUserAgent"))
 
     #If no subreddit exists with name
     try:
