@@ -3,10 +3,23 @@ import praw, random, os
 async def prawImgFind(subreddit="all",sortby="top",srange="100",retries="3"):
     usableExt=["jpg","peg","png","gif"]
     usableSort=["hot","new","controversial","top","rising"]
+    #Check that srange can be int
+    try:
+        float(srange)
+    except ValueError:
+        return("srange_not_int")
+
+    #Check that retries can be int
+    try:
+        float(retries)
+    except ValueError:
+        return("retries_not_int")
 
     if sortby not in usableSort: #if not a valid sorting method
         return("no_sort")
 
+    sortby=sortby.lower()
+    
     #setup reddit api connection
     reddit=praw.Reddit(client_id=os.getenv("prawClientId"), client_secret=os.getenv("prawClientSecret"), user_agent=os.getenv("prawUserAgent"))
 
@@ -29,6 +42,8 @@ async def prawImgFind(subreddit="all",sortby="top",srange="100",retries="3"):
         posts = [post for post in subGet.top(limit=int(srange))]
     elif sortby=="rising":
         posts = [post for post in subGet.rising(limit=int(srange))]
+    else:
+        return("sortby_invalid")
 
     randTop = min(len(posts),int(srange))-1
 
