@@ -28,7 +28,6 @@ class Subreddit:
                 textReturn = "Enter a sorting method after '-s'. Default: Hot"
                 prawReady = False
 
-
         #Get parameter: Random range
         if "-r" in commandList: 
             if commandList.index("-r")+1<len(commandList):
@@ -37,22 +36,14 @@ class Subreddit:
                 textReturn = "Enter a range after '-s'. Default: 100"
                 prawReady = False
 
-
-        #Get parameter: Attempt count
-        if "-c" in commandList: 
-            if commandList.index("-c")+1<len(commandList):
-                optDict["retries"] = commandList[commandList.index("-c")+1]
-            else:
-                textReturn = "Enter a retry count after '-c'. Default: 3"
-                prawReady = False
         if prawReady:
             textReturn = await prawImage.prawImgFind(**optDict)
             if textReturn == "no_sub":
-                textReturn = "`Invalid subreddit.`"
+                textReturn = "Invalid subreddit."
             elif textReturn == "no_image":
-                textReturn = "`No images could be found.`"
-            elif textReturn == "srange_not_int":
-                textReturn = "Specify a number for -r"
+                textReturn = "No images could be found."
+            elif textReturn == "no_sort":
+                textReturn = "Specify an appropriate value for -s"
             elif textReturn == "retries_not_int":
                 textReturn = "Specify a number for -c"
 

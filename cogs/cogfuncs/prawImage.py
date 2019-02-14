@@ -1,6 +1,6 @@
 import praw, random, os
 
-async def prawImgFind(subreddit="all",sortby="top",srange="100",retries="3"):
+async def prawImgFind(subreddit="all",sortby="hot",srange="100"):
     usableExt=["jpg","peg","png","gif"]
     usableSort=["hot","new","controversial","top","rising"]
     #Check that srange can be int
@@ -8,12 +8,6 @@ async def prawImgFind(subreddit="all",sortby="top",srange="100",retries="3"):
         float(srange)
     except ValueError:
         return("srange_not_int")
-
-    #Check that retries can be int
-    try:
-        float(retries)
-    except ValueError:
-        return("retries_not_int")
 
     if sortby not in usableSort: #if not a valid sorting method
         return("no_sort")
@@ -36,22 +30,25 @@ async def prawImgFind(subreddit="all",sortby="top",srange="100",retries="3"):
         posts = [post for post in subGet.best(limit=int(srange))]
     elif sortby=="new":
         posts = [post for post in subGet.new(limit=int(srange))]
+    elif sortby=="new":
+        posts = [post for post in subGet.new(limit=int(srange))]
     elif sortby=="controversial":
         posts = [post for post in subGet.controversial(limit=int(srange))]
     elif sortby=="top":
         posts = [post for post in subGet.top(limit=int(srange))]
     elif sortby=="rising":
         posts = [post for post in subGet.rising(limit=int(srange))]
+    elif sortby=="hot":
+        posts = [post for post in subGet.hot(limit=int(srange))]
+
+    imgPosts = []
+    for post in posts:
+        if post.url[-3:] in usableExt:
+            imgPosts.append(post)
+    
+    if len(imgPosts) == 0:
+        return("no_image")
     else:
-        return("sortby_invalid")
-
-    randTop = min(len(posts),int(srange))-1
-
-    #Keep picking random posts until valid image post found
-    for i in range(0,int(retries)):
-        randomPost = posts[random.randint(0,randTop)].url
-        print(randomPost)
-        if randomPost[-3:] in usableExt:
-            return(randomPost)
-        i+=1
-    return("no_image")
+        randomPost = imgPosts[random.randint(0,len(imgPosts)-1)]
+        randomPostUrl = randomPost.url
+        return(randomPostUrl)

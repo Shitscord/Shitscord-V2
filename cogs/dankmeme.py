@@ -12,10 +12,6 @@ class Dankmeme:
         danksr=["dankmemes","okbuddyretard","dogelore","blessedimages","blursedimages","bonehurtingjuice","comedyheavan","cursedcomments","hmmtodayiwill","sbubby"]
         srfind=danksr[random.randint(0,len(danksr)-1)]
         textReturn = await prawImage.prawImgFind(subreddit=srfind)
-        if textReturn == "no_sub":
-            textReturn = "`Invalid subreddit.`"
-        elif textReturn == "no_image":
-            textReturn = "`No images could be found.`"
         await self.client.say(textReturn)
 
 
