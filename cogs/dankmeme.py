@@ -14,7 +14,7 @@ class Dankmeme:
         embed = await prawImage.prawImgFind(subname=srfind)
 
         if not isinstance(embed, str):
-            await self.client.send_message(ctx.message.channel, "test", embed=embed)
+            await self.client.send_message(ctx.message.channel, embed=embed)
 
 
 def setup(client):
