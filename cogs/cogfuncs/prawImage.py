@@ -1,6 +1,7 @@
 import praw, random, os
+from cogs.cogfuncs import embedGen
 
-async def prawImgFind(subreddit="all",sortby="hot",srange="100"):
+async def prawImgFind(subname="all",sortby="hot",srange="100"):
     usableExt=["jpg","peg","png","gif"]
     usableSort=["hot","new","controversial","top","rising"]
     #Check that srange can be int
@@ -19,11 +20,11 @@ async def prawImgFind(subreddit="all",sortby="hot",srange="100"):
 
     #If no subreddit exists with name
     try:
-        reddit.subreddits.search_by_name(subreddit, exact=True)
+        reddit.subreddits.search_by_name(subname, exact=True)
     except:
         return("no_sub")    
 
-    subGet = reddit.subreddit(subreddit)
+    subGet = reddit.subreddit(subname)
 
     #Apply sorting method in dumb way
     if sortby=="best":
@@ -49,6 +50,15 @@ async def prawImgFind(subreddit="all",sortby="hot",srange="100"):
     if len(imgPosts) == 0:
         return("no_image")
     else:
-        randomPost = imgPosts[random.randint(0,len(imgPosts)-1)]
-        randomPostUrl = randomPost.url
-        return(randomPostUrl)
+        submission = imgPosts[random.randint(0,len(imgPosts)-1)]
+
+        postDictionary = {}
+
+        postName = submission.title
+        postUrl = submission.permalink
+        imageUrl = submission.url
+        subName = str(subname).lower()
+    
+        embed = await embedGen.redditImageEmbed(postName, postUrl, imageUrl, subName)
+
+        return(embed)

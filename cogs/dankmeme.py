@@ -11,8 +11,10 @@ class Dankmeme:
         await self.client.send_typing(ctx.message.channel)
         danksr=["dankmemes","okbuddyretard","dogelore","blessedimages","blursedimages","bonehurtingjuice","comedyheavan","cursedcomments","hmmtodayiwill","sbubby"]
         srfind=danksr[random.randint(0,len(danksr)-1)]
-        textReturn = await prawImage.prawImgFind(subreddit=srfind)
-        await self.client.say(textReturn)
+        embed = await prawImage.prawImgFind(subname=srfind)
+
+        if not isinstance(embed, str):
+            await self.client.send_message(ctx.message.channel, "test", embed=embed)
 
 
 def setup(client):
