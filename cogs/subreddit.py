@@ -13,24 +13,25 @@ class Subreddit:
 
         optDict={}
 
+        #Get parameter: Subreddit
         if len(commandList) >= 2:
             optDict["subname"]=commandList[1]
+        else:
+            optDict["subname"] = None
         
         #Get parameter: Sort by
+        tempParam = None
         if "-s" in commandList: 
             if commandList.index("-s")+1<len(commandList):
-                tempParam = commandList[commandList.index("-s")+1]
-            else:
-                tempParam = None
+                tempParam = commandList[commandList.index("-s")+1]                
             optDict["sortby"] = tempParam
 
         #Get parameter: Random range
+        tempParam = None
         if "-r" in commandList: 
             if commandList.index("-r")+1<len(commandList):
                 tempParam = commandList[commandList.index("-r")+1]
-            else:
-                tempParam = None
-            optDict["srange"]
+            optDict["srange"] = tempParam
 
         print(optDict)
         embed = await prawImage.prawImgFind(**optDict)

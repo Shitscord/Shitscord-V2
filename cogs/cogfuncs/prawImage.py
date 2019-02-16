@@ -1,17 +1,25 @@
 import praw, random, os
 from cogs.cogfuncs import embedGen
 
-async def prawImgFind(subname="all",sortby="hot",srange="100"):
+async def prawImgFind(subname="",sortby="hot",srange="100"):
     usableExt=["jpg","peg","png","gif"]
     usableSort=["hot","new","controversial","top","rising"]
+    error=None
+
     #Check that srange can be int
     try:
-        float(srange)
-    except ValueError:
-        return("srange_not_int")
+        int(srange)
+    except:
+        error = "inappropriate_srange"
+        srange = 100
+    else:
+        if int(srange)>500:
+            error = "inappropriate_srange"
+            srange = 100
 
     if sortby not in usableSort: #if not a valid sorting method
-        return("no_sort")
+        error = "no_sort"
+        sortby = "hot"
 
     sortby=sortby.lower()
     
@@ -19,10 +27,16 @@ async def prawImgFind(subname="all",sortby="hot",srange="100"):
     reddit=praw.Reddit(client_id=os.getenv("prawClientId"), client_secret=os.getenv("prawClientSecret"), user_agent=os.getenv("prawUserAgent"))
 
     #If no subreddit exists with name
-    try:
-        reddit.subreddits.search_by_name(subname, exact=True)
-    except:
-        return("no_sub")    
+    if subname == None:
+        error = "no_sub"   
+        subname = "all" 
+    else:
+        try:
+            reddit.subreddits.search_by_name(subname, exact=True)
+        except:
+            error = "no_sub"   
+            subname = "all"              
+
 
     subGet = reddit.subreddit(subname)
 
@@ -48,7 +62,7 @@ async def prawImgFind(subname="all",sortby="hot",srange="100"):
             imgPosts.append(post)
     
     if len(imgPosts) == 0:
-        return("no_image")
+        error = "no_image"
     else:
         submission = imgPosts[random.randint(0,len(imgPosts)-1)]
 
@@ -57,8 +71,8 @@ async def prawImgFind(subname="all",sortby="hot",srange="100"):
         postName = submission.title
         postUrl = submission.permalink
         imageUrl = submission.url
-        subName = str(subname).lower()
+        subName = submission.subreddit.display_name
     
-        embed = await embedGen.redditImageEmbed(postName, postUrl, imageUrl, subName)
+        embed = await embedGen.redditImageEmbed(postname=postName, posturl=postUrl, imageurl=imageUrl, subname=subName, error=error)
 
         return(embed)
