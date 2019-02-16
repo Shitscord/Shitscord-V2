@@ -4,21 +4,22 @@ from cogs.cogfuncs import embedGen
 async def prawImgFind(subname="",sortby="hot",srange="100"):
     usableExt=["jpg","peg","png","gif"]
     usableSort=["hot","new","controversial","top","rising"]
-    error=None
+
+    paramDict={}
 
     #Check that srange can be int
     try:
         int(srange)
     except:
-        error = "inappropriate_srange"
+        paramDict["error"] = "inappropriate_srange"
         srange = 100
     else:
         if int(srange)>500:
-            error = "inappropriate_srange"
+            paramDict["error"] = "inappropriate_srange"
             srange = 100
 
     if sortby not in usableSort: #if not a valid sorting method
-        error = "no_sort"
+        paramDict["error"] = "no_sort"
         sortby = "hot"
 
     sortby=sortby.lower()
@@ -28,13 +29,13 @@ async def prawImgFind(subname="",sortby="hot",srange="100"):
 
     #If no subreddit exists with name
     if subname == None:
-        error = "no_sub"   
+        paramDict["error"] = "no_sub"   
         subname = "all" 
     else:
         try:
             reddit.subreddits.search_by_name(subname, exact=True)
         except:
-            error = "no_sub"   
+            paramDict["error"] = "no_sub"   
             subname = "all"              
 
 
@@ -62,17 +63,17 @@ async def prawImgFind(subname="",sortby="hot",srange="100"):
             imgPosts.append(post)
     
     if len(imgPosts) == 0:
-        error = "no_image"
+        paramDict["error"] = "no_image"
     else:
         submission = imgPosts[random.randint(0,len(imgPosts)-1)]
 
         postDictionary = {}
 
-        postName = submission.title
-        postUrl = submission.permalink
-        imageUrl = submission.url
-        subName = submission.subreddit.display_name
+        paramDict["postname"] = submission.title
+        paramDict["posturl"] = submission.permalink
+        paramDict["imageurl"] = submission.url
+        paramDict["subname"] = submission.subreddit.display_name
     
-        embed = await embedGen.redditImageEmbed(postname=postName, posturl=postUrl, imageurl=imageUrl, subname=subName, error=error)
+    embed = await embedGen.redditImageEmbed(**paramDict)
 
-        return(embed)
+    return(embed)

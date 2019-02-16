@@ -1,6 +1,7 @@
 import discord, praw
 
 async def redditImageEmbed(postname="", posturl="", imageurl="", subname="", error=None):
+    print("Error: "+str(error))
     if error=="no_image":
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="No images could be found. Try a different subreddit or increase -s.")
     else:
