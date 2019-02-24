@@ -2,16 +2,32 @@ import discord, random
 from discord.ext import commands
 from cogs.cogfuncs import prawImage
 
+
 class Subreddit:
     def __init__(self, client):
         self.client = client
-    
+
+    async def is_nsfw(self, channel: discord.Channel):
+        try:
+            _gid = channel.server.id
+        except AttributeError:
+            return False
+        data = await self.client.http.request(
+            discord.http.Route(
+                'GET', '/guilds/{guild_id}/channels', guild_id=_gid))
+        channeldata = [d for d in data if d['id'] == channel.id][0]
+        return channeldata['nsfw']
+
     @commands.command(pass_context=True)
     async def subreddit(self, ctx):
         await self.client.send_typing(ctx.message.channel)
         commandList=str(ctx.message.content).split()
 
         optDict={}
+
+        channelnsfw = await self.is_nsfw(ctx.message.channel)
+        if channelnsfw:
+            optDict["nsfwEnable"]=True
 
         #Get parameter: Subreddit
         if len(commandList) >= 2:

@@ -1,7 +1,7 @@
 import praw, random, os
 from cogs.cogfuncs import embedGen
 
-async def prawImgFind(subname="",sortby="hot",srange="100"):
+async def prawImgFind(subname="",sortby="hot",srange="100",nsfwEnable=False):
     usableExt=["jpg","peg","png","gif"]
     usableSort=["hot","new","controversial","top","rising"]
 
@@ -60,7 +60,12 @@ async def prawImgFind(subname="",sortby="hot",srange="100"):
     imgPosts = []
     for post in posts:
         if post.url[-3:] in usableExt:
-            imgPosts.append(post)
+            if nsfwEnable:
+                imgPosts.append(post)
+            else:
+                if not post.over_18:
+                    imgPosts.append(post)
+
     
     if len(imgPosts) == 0:
         paramDict["error"] = "no_image"
