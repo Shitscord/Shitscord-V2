@@ -3,11 +3,11 @@ from discord.ext import commands
 from cogs.cogfuncs import prawImage
 
 
-class Subreddit:
+class Subreddit(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    async def is_nsfw(self, channel: discord.Channel):
+    async def is_nsfw(self, channel):
         try:
             _gid = channel.server.id
         except AttributeError:
@@ -20,38 +20,39 @@ class Subreddit:
 
     @commands.command(pass_context=True)
     async def subreddit(self, ctx):
-        await self.client.send_typing(ctx.message.channel)
-        commandList=str(ctx.message.content).split()
+        async with ctx.message.channel.typing():
+            commandList=str(ctx.message.content).split()
 
-        optDict={}
+            optDict={}
 
-        channelnsfw = await self.is_nsfw(ctx.message.channel)
-        if channelnsfw:
-            optDict["nsfwEnable"]=True
+            #Check if channel is NSFW
+            if ctx.channel.is_nsfw():
+                optDict["nsfwEnable"]=True
 
-        #Get parameter: Subreddit
-        if len(commandList) >= 2:
-            optDict["subname"]=commandList[1]
-        else:
-            optDict["subname"] = None
-        
-        #Get parameter: Sort by
-        tempParam = None
-        if "-s" in commandList: 
-            if commandList.index("-s")+1<len(commandList):
-                tempParam = commandList[commandList.index("-s")+1]                
-            optDict["sortby"] = tempParam
+            #Get parameter: Subreddit
+            if len(commandList) >= 2:
+                optDict["subname"]=commandList[1]
+            else:
+                optDict["subname"] = None
+            
+            #Get parameter: Sort by
+            tempParam = None
+            if "-s" in commandList: 
+                if commandList.index("-s")+1<len(commandList):
+                    tempParam = commandList[commandList.index("-s")+1]                
+                optDict["sortby"] = tempParam
 
-        #Get parameter: Random range
-        tempParam = None
-        if "-r" in commandList: 
-            if commandList.index("-r")+1<len(commandList):
-                tempParam = commandList[commandList.index("-r")+1]
-            optDict["srange"] = tempParam
+            #Get parameter: Random range
+            tempParam = None
+            if "-r" in commandList: 
+                if commandList.index("-r")+1<len(commandList):
+                    tempParam = commandList[commandList.index("-r")+1]
+                optDict["srange"] = tempParam
 
-        print(optDict)
-        embed = await prawImage.prawImgFind(**optDict)
-        await self.client.send_message(ctx.message.channel, embed=embed)
+            print(optDict)
+            embed = await prawImage.prawImgFind(**optDict)
+
+        await ctx.send(embed=embed)
 
 
 def setup(client):

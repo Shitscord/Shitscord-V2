@@ -8,10 +8,12 @@ if "isHeroku" not in os.environ:
     load_dotenv()
 
 #Loading all cog files from /cogs
+print("Loading Cogs")
 extensions=[]
 for cogfile in os.listdir("cogs"):
     if str(cogfile).endswith(".py"):
         extensions.append(cogfile[:-3])
+
 client = commands.Bot(command_prefix='!')
 testvar=1
 

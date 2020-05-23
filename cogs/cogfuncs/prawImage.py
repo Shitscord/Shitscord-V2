@@ -1,5 +1,5 @@
 import praw, random, os
-from cogs.cogfuncs import embedGen
+import cogs.cogfuncs.embedGen as embedGen
 
 async def prawImgFind(subname="",sortby="hot",srange="100",nsfwEnable=False):
     usableExt=["jpg","peg","png","gif"]
@@ -71,8 +71,6 @@ async def prawImgFind(subname="",sortby="hot",srange="100",nsfwEnable=False):
         paramDict["error"] = "no_image"
     else:
         submission = imgPosts[random.randint(0,len(imgPosts)-1)]
-
-        postDictionary = {}
 
         paramDict["postname"] = submission.title
         paramDict["posturl"] = submission.permalink
