@@ -11,7 +11,7 @@ class Dankmeme(commands.Cog):
         async with ctx.message.channel.typing():
             danksr=["dankmemes","okbuddyretard","dogelore","blessedimages","blursedimages","bonehurtingjuice","comedyheavan","cursedcomments","hmmtodayiwill","sbubby"]
             srfind=danksr[random.randint(0,len(danksr)-1)]
-            embed = await prawImage.prawImgFind(subname=srfind)
+            embed = await prawImage.prawImgFind(subname=srfind,sortby="default",srange="default",postType="default",)
 
         if not isinstance(embed, str):
             await ctx.send(embed=embed)
