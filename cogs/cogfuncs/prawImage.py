@@ -12,17 +12,17 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
 
     #Check that srange can be int
     if srange == "default":
-        srange = 100
+        srange = 50
     else:
         try:
             int(srange)
         except:
             errorList.append("inappropriate_srange")
-            srange = 100
+            srange = 50
         else:
             if int(srange)>500:
                 errorList.append("inappropriate_srange")
-                srange = 100
+                srange = 50
 
     #Check that sortby is a valid option
     sortby=sortby.lower()
@@ -73,6 +73,7 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
 
     #Create a list of all images, skip NSFW images if requesting channel is not NSFW
     imgPosts = []
+    nsfwFound = False
     for post in posts:
         if post.url[-3:] in usableExt:
             if nsfwEnable:
@@ -82,11 +83,10 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
                 if not post.over_18:
                     imgPosts.append(post)
 
-
-    if len(imgPosts) == 0 and postType == "image":
-        errorList.append("none_found")
-    elif len(imgPosts) == 0 and nsfwFound == False:
+    if len(imgPosts) == 0 and nsfwFound == True and nsfwEnable == False:
         errorList.append("only_nsfw_found")
+    elif len(imgPosts) == 0 and nsfwFound == False:
+        errorList.append("none_found")
     else:
         submission = imgPosts[random.randint(0,len(imgPosts)-1)]
         paramDict["postname"] = submission.title
