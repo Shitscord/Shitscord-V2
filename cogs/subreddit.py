@@ -31,23 +31,36 @@ class Subreddit(commands.Cog):
 
             #Get parameter: Subreddit
             if len(commandList) >= 2:
-                optDict["subname"]=commandList[1]
+                if not commandList[1].startswith("-"):
+                    optDict["subname"]=commandList[1]
+                else:
+                    optDict["subname"] = None
             else:
                 optDict["subname"] = None
             
             #Get parameter: Sort by
-            tempParam = None
             if "-s" in commandList: 
                 if commandList.index("-s")+1<len(commandList):
-                    tempParam = commandList[commandList.index("-s")+1]                
-                optDict["sortby"] = tempParam
+                    if not commandList[commandList.index("-s")+1].startswith("-"):
+                        optDict["sortby"] = commandList[commandList.index("-s")+1]                
+            else:
+                optDict["sortby"] = "default"
 
             #Get parameter: Random range
-            tempParam = None
             if "-r" in commandList: 
                 if commandList.index("-r")+1<len(commandList):
-                    tempParam = commandList[commandList.index("-r")+1]
-                optDict["srange"] = tempParam
+                    if not commandList[commandList.index("-r")+1].startswith("-"):
+                        optDict["srange"] = commandList[commandList.index("-r")+1] 
+            else:
+                optDict["srange"] = "default"
+
+            #Get parameter: Post type
+            if "-t" in commandList: 
+                if commandList.index("-t")+1<len(commandList):
+                    if not commandList[commandList.index("-t")+1].startswith("-"):
+                        optDict["postType"] = commandList[commandList.index("-t")+1] 
+            else:
+                optDict["postType"] = "default"
 
             print(optDict)
             embed = await prawImage.prawImgFind(**optDict)
