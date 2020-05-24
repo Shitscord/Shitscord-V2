@@ -9,7 +9,7 @@ class Dankmeme(commands.Cog):
     @commands.command(pass_context=True)
     async def dankmeme(self, ctx):
         async with ctx.message.channel.typing():
-            danksr=["dankmemes","okbuddyretard","dogelore","blessedimages","blursedimages","bonehurtingjuice","comedyheavan","cursedcomments","hmmtodayiwill","sbubby"]
+            danksr=["dankmemes","okbuddyretard","dogelore","blursedimages","bonehurtingjuice","comedyheaven","hmmtodayiwill","sbubby"]
             srfind=danksr[random.randint(0,len(danksr)-1)]
             embed = await prawImage.prawImgFind(subname=srfind,sortby="default",srange="default",postType="default",)
 
