@@ -86,13 +86,14 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
                 else:
                     nsfwimgFound = True
         else:
-            if nsfwEnable:
-                txtPosts.append(post)
-            else:
-                if not post.over_18:
+            if post.selftext != "":
+                if nsfwEnable:
                     txtPosts.append(post)
                 else:
-                    nsfwtxtFound = True
+                    if not post.over_18:
+                        txtPosts.append(post)
+                    else:
+                        nsfwtxtFound = True
 
     if len(imgPosts) == 0 and nsfwimgFound == True and nsfwEnable == False and postType=="image": #If seeking sfw img and only found nsfw
       errorList.append("only_nsfw_found")
@@ -129,7 +130,7 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
             paramDict["postname"] = submission.title
             paramDict["posturl"] = submission.permalink
             paramDict["subname"] = submission.subreddit.display_name
-            if post.url[-3:] in usableExt:
+            if submission.url[-3:] in usableExt:
                 paramDict["postType"] = "image"
                 paramDict["content"] = submission.url
             else:
