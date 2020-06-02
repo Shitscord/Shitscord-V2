@@ -70,3 +70,5 @@ class Subreddit(commands.Cog):
 
 def setup(client):
     client.add_cog(Subreddit(client))
+
+

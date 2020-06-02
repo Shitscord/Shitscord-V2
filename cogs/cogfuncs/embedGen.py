@@ -1,6 +1,6 @@
 import discord, praw
 
-async def redditImageEmbed(errorList, postType = "", postname="", posturl="", imageurl="", subname=""):
+async def redditImageEmbed(errorList, postType = "", postname="", posturl="", imageurl="", subname="", content=""):
     print("Error: ", errorList)
     if "none_found" in errorList:
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="No images could be found using the given parameters. Try a different subreddit or increase -r.")
@@ -11,7 +11,16 @@ async def redditImageEmbed(errorList, postType = "", postname="", posturl="", im
         suburl = "http://www.reddit.com/r/" + subname
         subname = "r/" + subname
         embed = discord.Embed(title=postname, colour=discord.Colour(0xff4500), url=posturl)
-        embed.set_image(url=imageurl)
+        if postType == "image":
+            embed.set_image(url=content)
+        elif postType == "text" and type(content) == str:
+            embed.add_field(name="1 of 1", value=content)
+        elif postType == "text" and type(content) == list:
+            x=0
+            for string in content:
+                embed.add_field(name=str(x+1)+" of "+str(len(content)), value=string)
+                x+=1
+                
         embed.set_author(name=subname, url=suburl, icon_url="https://i.imgur.com/dsf46oW.png")
         if len(errorList) != 0:
             errorMessage = ":warning:"
