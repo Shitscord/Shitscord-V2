@@ -81,22 +81,24 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
             if nsfwEnable:
                 imgPosts.append(post)
             else:
-                nsfwimgFound = True
                 if not post.over_18:
                     imgPosts.append(post)
+                else:
+                    nsfwimgFound = True
         else:
             if nsfwEnable:
                 txtPosts.append(post)
             else:
-                nsfwpicFound = True
                 if not post.over_18:
                     txtPosts.append(post)
+                else:
+                    nsfwtxtFound = True
 
-    if len(imgPosts) == 0 and nsfwimgFound == True and nsfwEnable == False and postType=="image": #If seeking sfw img and only found nsfw
+    if len(imgPosts) == 0 and nsfwimgFound == True and nsfwEnable == False and postType=="image" or len(imgPosts) == 0 and nsfwimgFound == True and nsfwEnable == False and postType=="all": #If seeking sfw img and only found nsfw
         errorList.append("only_nsfw_found")
-    elif len(imgPosts) == 0 and nsfwimgFound == False and postType=="image": #If no images found at all
+    elif len(imgPosts) == 0 and nsfwimgFound == False and postType=="image" or len(imgPosts) == 0 and nsfwimgFound == False and postType=="all": #If no images found at all
         errorList.append("none_found")
-    elif len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="text": #If seeking sfw txt and only found nsfw
+    elif len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="text" or len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="all": #If seeking sfw txt and only found nsfw
         errorList.append("only_nsfw_found")
     elif len(txtPosts) == 0 and nsfwtxtFound == False and postType=="text": #If no text found at all
         errorList.append("none_found")
