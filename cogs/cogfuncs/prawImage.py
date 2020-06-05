@@ -1,4 +1,4 @@
-import praw, random, os, textwrap
+import praw, random, os
 import cogs.cogfuncs.redditEmbedGen as redditEmbedGen
 
 async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=False):
@@ -138,11 +138,7 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
                 postType = "text"
                 paramDict["content"] = submission.selftext
             
-        if len(paramDict["content"]) > 1024 and paramDict["postType"] == "text":
-            splitList = []
-            for line in textwrap.wrap(paramDict["content"], 1020):
-                splitList.append(line)
-            paramDict["content"] = splitList
+
 
     print(paramDict)
 

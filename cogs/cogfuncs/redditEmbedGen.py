@@ -1,4 +1,4 @@
-import discord, praw
+import discord, praw, textwrap
 
 #Generate embed message for a fatal error such as no content found at all.
 async def errorEmbed(errorList):
@@ -44,15 +44,17 @@ async def textEmbed(errorList, postname="", posturl="", imageurl="", subname="",
     suburl = "http://www.reddit.com/r/" + subname
     subname = "r/" + subname
     embed = discord.Embed(title=postname, colour=discord.Colour(0xff4500), url=posturl)
-    if postType == "image":
-        embed.set_image(url=content)
-    elif postType == "text" and type(content) == str:
-        embed.add_field(name="1 of 1", value=content)
-    elif postType == "text" and type(content) == list:
+    if len(content) > 1000:
+        splitList = []
+        for line in textwrap.wrap(content, 1000):
+            splitList.append(line)
+        content = splitList
         x=0
         for string in content:
             embed.add_field(name=str(x+1)+" of "+str(len(content)), value=string)
             x+=1
+    else:
+        embed.add_field(name="1 of 1", value=content)
     if icon == "":
         icon = "https://i.imgur.com/dsf46oW.png"
     embed.set_author(name=subname, url=suburl, icon_url=icon)
