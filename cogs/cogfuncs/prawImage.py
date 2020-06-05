@@ -1,5 +1,5 @@
 import praw, random, os, textwrap
-import cogs.cogfuncs.embedGen as embedGen
+import cogs.cogfuncs.redditEmbedGen as redditEmbedGen
 
 async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=False):
     #Setup image types, sorting methods, empty dictionary for parameters, and list for errors to be reported
@@ -38,7 +38,7 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
         postType = "all"
     else:
         if postType not in usableType:
-            errorList.append("noType")
+            errorList.append("no_type")
             postType = "all"
     
     #setup reddit api connection
@@ -57,7 +57,7 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
 
     subGet = reddit.subreddit(subname)
     paramDict["icon"] = subGet.icon_img
-    
+
     #Apply sorting method in dumb way
     if sortby=="best":
         posts = [post for post in subGet.best(limit=int(srange))]
@@ -117,14 +117,14 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
             paramDict["posturl"] = submission.permalink
             paramDict["content"] = submission.url
             paramDict["subname"] = submission.subreddit.display_name
-            paramDict["postType"] = "image"
+            postType = "image"
         elif postType == "text":
             submission = txtPosts[random.randint(0,len(txtPosts)-1)]
             paramDict["postname"] = submission.title
             paramDict["posturl"] = submission.permalink
             paramDict["content"] = submission.selftext
             paramDict["subname"] = submission.subreddit.display_name
-            paramDict["postType"] = "text"
+            postType = "text"
         elif postType == "all":
             fullList = txtPosts + imgPosts
             submission = fullList[random.randint(0,len(fullList)-1)]
@@ -132,10 +132,10 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
             paramDict["posturl"] = submission.permalink
             paramDict["subname"] = submission.subreddit.display_name
             if submission.url[-3:] in usableExt:
-                paramDict["postType"] = "image"
+                postType = "image"
                 paramDict["content"] = submission.url
             else:
-                paramDict["postType"] = "text"
+                postType = "text"
                 paramDict["content"] = submission.selftext
             
         if len(paramDict["content"]) > 1024 and paramDict["postType"] == "text":
@@ -145,6 +145,12 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
             paramDict["content"] = splitList
 
     print(paramDict)
-    embed = await embedGen.redditImageEmbed(errorList, **paramDict)
 
+    if "none_found" in errorList or "only_nsfw_found" in errorList:
+        redditEmbedGen.errorEmbed(errorList)
+    elif postType == "image":
+        embed = await redditEmbedGen.imageEmbed(errorList, **paramDict)
+    elif postType == "text":
+        embed = await redditEmbedGen.textEmbed(errorList, **paramDict)
+        
     return(embed)

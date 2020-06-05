@@ -63,6 +63,7 @@ class Subreddit(commands.Cog):
                 optDict["postType"] = "default"
 
             print(optDict)
+
             embed = await prawImage.prawImgFind(**optDict)
 
         await ctx.send(embed=embed)
