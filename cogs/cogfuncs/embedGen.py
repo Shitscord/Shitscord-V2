@@ -20,7 +20,8 @@ async def redditImageEmbed(errorList, postType = "", postname="", posturl="", im
             for string in content:
                 embed.add_field(name=str(x+1)+" of "+str(len(content)), value=string)
                 x+=1
-                
+        if icon == "":
+            icon = "https://i.imgur.com/dsf46oW.png"
         embed.set_author(name=subname, url=suburl, icon_url=icon)
         if len(errorList) != 0:
             errorMessage = ":warning:"
