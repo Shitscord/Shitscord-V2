@@ -1,6 +1,6 @@
 import discord, praw
 
-async def redditImageEmbed(errorList, postType = "", postname="", posturl="", imageurl="", subname="", content=""):
+async def redditImageEmbed(errorList, postType = "", postname="", posturl="", imageurl="", subname="", content="", icon=""):
     print("Error: ", errorList)
     if "none_found" in errorList:
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="No images could be found using the given parameters. Try a different subreddit or increase -r.")
@@ -21,7 +21,7 @@ async def redditImageEmbed(errorList, postType = "", postname="", posturl="", im
                 embed.add_field(name=str(x+1)+" of "+str(len(content)), value=string)
                 x+=1
                 
-        embed.set_author(name=subname, url=suburl, icon_url="https://i.imgur.com/dsf46oW.png")
+        embed.set_author(name=subname, url=suburl, icon_url=icon)
         if len(errorList) != 0:
             errorMessage = ":warning:"
             if "inappropriate_srange" in errorList:

@@ -56,7 +56,8 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
             subname = "all"              
 
     subGet = reddit.subreddit(subname)
-
+    paramDict["icon"] = subGet.icon_img
+    
     #Apply sorting method in dumb way
     if sortby=="best":
         posts = [post for post in subGet.best(limit=int(srange))]
