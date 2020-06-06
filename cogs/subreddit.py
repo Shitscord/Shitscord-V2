@@ -1,7 +1,7 @@
 import discord, random
 from discord.ext import commands
 from cogs.cogfuncs import prawImage
-
+from cogs.cogfuncs import redditEmbedGen
 
 class Subreddit(commands.Cog):
     def __init__(self, client):
@@ -62,9 +62,16 @@ class Subreddit(commands.Cog):
             else:
                 optDict["postType"] = "default"
 
-            print(optDict)
+            #Pass parameters to prawImgFind to get content from reddit. Returns a dictionary of metadata/errors/content itself
+            contentDict = await prawImage.prawImgFind(**optDict)
 
-            embed = await prawImage.prawImgFind(**optDict)
+            #Check for any fatal errors and pass the content to the correct embed generator, send the embed
+            if any(item.startswith("fatal_") for item in contentDict["errorlist"]):
+                embed = await redditEmbedGen.errorEmbed(contentDict["errorlist"])
+            elif contentDict["type"] == "image":
+                embed = await redditEmbedGen.imageEmbed(contentDict)
+            elif contentDict["type"] == "text":
+                embed = await redditEmbedGen.textEmbed(contentDict)
 
         await ctx.send(embed=embed)
 

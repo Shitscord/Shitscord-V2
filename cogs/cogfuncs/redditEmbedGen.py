@@ -2,12 +2,12 @@ import discord, praw, textwrap
 
 #Generate embed message for a fatal error such as no content found at all.
 async def errorEmbed(errorList):
-    print("Generating error embed")
-    if "none_found" in errorList:
+    print("Generating error embed:", errorList)
+    if "fatal_none_found" in errorList:
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="No content could be found using the given parameters. Try a different subreddit, increase the range, or try a different type.")
-    elif "only_nsfw_found" in errorList:
+    elif "fatal_only_nsfw_found" in errorList:
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="Only content marked as NSFW could be found. You may be trying to access an NSFW subreddit in a SFW channel. Either try a SFW subreddit or repeat the command in an NSFW channel.")
-    elif "private_or_quarantined" in errorList:
+    elif "fatal_private_or_quarantined" in errorList:
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="This subreddit has been Quarantined, Private, or does not exist.")
     return(embed)
 
@@ -27,27 +27,28 @@ async def embedStatus(errorList):
     return(errorMessage)
 
 #Handle embed generation for image posts
-async def imageEmbed(errorList, postname="", posturl="", imageurl="", subname="", content="", icon=""):
-    print("Error: ", errorList)
-    posturl = "http://www.reddit.com" + str(posturl)
-    suburl = "http://www.reddit.com/r/" + subname
-    subname = "r/" + subname
-    embed = discord.Embed(title=postname, colour=discord.Colour(0xff4500), url=posturl)
-    embed.set_image(url=content)
-    if icon == "":
-        icon = "https://i.imgur.com/dsf46oW.png"
-    embed.set_author(name=subname, url=suburl, icon_url=icon)
-    if len(errorList) != 0:
-        embed.description = await embedStatus(errorList)
+async def imageEmbed(contDict):
+    print("Error: ", contDict["errorlist"])
+    fullurl = "http://www.reddit.com" + str(contDict["posturl"])
+    suburl = "http://www.reddit.com/r/" + contDict["subname"]
+    fullsubname = "r/" + contDict["subname"]
+    embed = discord.Embed(title=contDict["postname"], colour=discord.Colour(0xff4500), url=fullurl)
+    embed.set_image(url=contDict["content"])
+    if contDict["icon"] == "":
+        contDict["icon"] = "https://i.imgur.com/dsf46oW.png"
+    embed.set_author(name=fullsubname, url=suburl, icon_url=contDict["icon"])
+    if len(contDict["errorlist"]) != 0:
+        embed.description = await embedStatus(contDict["errorlist"])
     return(embed)
 
 #Handle embed generation for text posts
-async def textEmbed(errorList, postname="", posturl="", imageurl="", subname="", content="", icon=""):
-    print("Error: ", errorList)
-    posturl = "http://www.reddit.com" + str(posturl)
-    suburl = "http://www.reddit.com/r/" + subname
-    subname = "r/" + subname
-    embed = discord.Embed(title=postname, colour=discord.Colour(0xff4500), url=posturl)
+async def textEmbed(contDict):
+    print("Error: ", contDict["errorlist"])
+    fullurl = "http://www.reddit.com" + str(contDict["posturl"])
+    suburl = "http://www.reddit.com/r/" + contDict["subname"]
+    fullsubname = "r/" + contDict["subname"]
+    embed = discord.Embed(title=contDict["postname"], colour=discord.Colour(0xff4500), url=fullurl)
+    content = contDict["content"]
     if len(content) > 1000:
         splitList = []
         for line in textwrap.wrap(content, 1000):
@@ -59,9 +60,9 @@ async def textEmbed(errorList, postname="", posturl="", imageurl="", subname="",
             x+=1
     else:
         embed.add_field(name="1 of 1", value=content)
-    if icon == "":
-        icon = "https://i.imgur.com/dsf46oW.png"
-    embed.set_author(name=subname, url=suburl, icon_url=icon)
-    if len(errorList) != 0:
-        embed.description = await embedStatus(errorList)
+    if contDict["icon"] == "":
+        contDict["icon"] = "https://i.imgur.com/dsf46oW.png"
+    embed.set_author(name=fullsubname, url=suburl, icon_url=contDict["icon"])
+    if len(contDict["errorlist"]) != 0:
+        embed.description = await embedStatus(contDict["errorlist"])
     return(embed)

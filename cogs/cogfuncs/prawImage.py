@@ -107,19 +107,19 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
                             nsfwtxtFound = True
 
         if len(imgPosts) == 0 and nsfwimgFound == True and nsfwEnable == False and postType=="image": #If seeking sfw img and only found nsfw
-            errorList.append("only_nsfw_found")
+            errorList.append("fatal_only_nsfw_found")
         elif len(imgPosts) == 0 and nsfwimgFound == False and postType=="image": #If no images found at all
-            errorList.append("none_found")
+            errorList.append("fatal_none_found")
         elif len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="text" or len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="all": #If seeking sfw txt and only found nsfw
-            errorList.append("only_nsfw_found")
+            errorList.append("fatal_only_nsfw_found")
         elif len(txtPosts) == 0 and nsfwtxtFound == False and postType=="text": #If no text found at all
-            errorList.append("none_found")
+            errorList.append("fatal_none_found")
         elif len(txtPosts) == 0 and len(imgPosts) == 0 and postType == "all": #If nothing found for all
-            errorList.append("none_found")
+            errorList.append("fatal_none_found")
         elif len(imgPosts) == 0 and len(txtPosts) ==0 and nsfwimgFound == True and nsfwEnable == False and postType=="all":
-            errorList.append("only_nsfw_found")
+            errorList.append("fatal_only_nsfw_found")
         elif len(imgPosts) == 0 and len(txtPosts) == 0 and nsfwimgFound == False and postType=="all":
-            errorList.append("none_found")
+            errorList.append("fatal_none_found")
         else:
             if postType == "image":
                 submission = imgPosts[random.randint(0,len(imgPosts)-1)]
@@ -127,14 +127,14 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
                 paramDict["posturl"] = submission.permalink
                 paramDict["content"] = submission.url
                 paramDict["subname"] = submission.subreddit.display_name
-                postType = "image"
+                paramDict["type"] = "image"
             elif postType == "text":
                 submission = txtPosts[random.randint(0,len(txtPosts)-1)]
                 paramDict["postname"] = submission.title
                 paramDict["posturl"] = submission.permalink
                 paramDict["content"] = submission.selftext
                 paramDict["subname"] = submission.subreddit.display_name
-                postType = "text"
+                paramDict["type"] = "text"
             elif postType == "all":
                 fullList = txtPosts + imgPosts
                 submission = fullList[random.randint(0,len(fullList)-1)]
@@ -142,22 +142,14 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
                 paramDict["posturl"] = submission.permalink
                 paramDict["subname"] = submission.subreddit.display_name
                 if submission.url[-3:] in usableExt:
-                    postType = "image"
+                    paramDict["type"] = "image"
                     paramDict["content"] = submission.url
                 else:
-                    postType = "text"
+                    paramDict["type"] = "text"
                     paramDict["content"] = submission.selftext
+        paramDict["errorlist"] = errorList
 
-        if "none_found" in errorList or "only_nsfw_found" in errorList:
-            embed = await redditEmbedGen.errorEmbed(errorList)
-        elif postType == "image":
-            embed = await redditEmbedGen.imageEmbed(errorList, **paramDict)
-        elif postType == "text":
-            embed = await redditEmbedGen.textEmbed(errorList, **paramDict)
-        return(embed)
     else:
-        print("notpublic")
-        errorList = ["private_or_quarantined"]    
-        embed = await redditEmbedGen.errorEmbed(errorList)
+        paramDict["errorlist"] = ["fatal_private_or_quarantined"]    
 
-        return(embed)
+    return(paramDict)
