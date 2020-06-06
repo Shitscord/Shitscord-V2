@@ -54,99 +54,110 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
         except:
             errorList.append("no_sub_found")   
             subname = "all"              
-
+    print(errorList)
+    print(subname)
     subGet = reddit.subreddit(subname)
-    paramDict["icon"] = subGet.icon_img
+    try:
+        subStatus = subGet.subreddit_type
+    except:
+        subStatus = None
 
-    #Apply sorting method in dumb way
-    if sortby=="best":
-        posts = [post for post in subGet.best(limit=int(srange))]
-    elif sortby=="new":
-        posts = [post for post in subGet.new(limit=int(srange))]
-    elif sortby=="controversial":
-        posts = [post for post in subGet.controversial(limit=int(srange))]
-    elif sortby=="top":
-        posts = [post for post in subGet.top(limit=int(srange))]
-    elif sortby=="rising":
-        posts = [post for post in subGet.rising(limit=int(srange))]
-    elif sortby=="hot":
-        posts = [post for post in subGet.hot(limit=int(srange))]
+    if subStatus == "public" or subname == "all":
+        print("publicsub")
+        try:
+            paramDict["icon"] = subGet.icon_img
+        except:
+            paramDict["icon"] = ""
+        #Apply sorting method in dumb way
+        if sortby=="best":
+            posts = [post for post in subGet.best(limit=int(srange))]
+        elif sortby=="new":
+            posts = [post for post in subGet.new(limit=int(srange))]
+        elif sortby=="controversial":
+            posts = [post for post in subGet.controversial(limit=int(srange))]
+        elif sortby=="top":
+            posts = [post for post in subGet.top(limit=int(srange))]
+        elif sortby=="rising":
+            posts = [post for post in subGet.rising(limit=int(srange))]
+        elif sortby=="hot":
+            posts = [post for post in subGet.hot(limit=int(srange))]
 
-    #Create a list of all images, skip NSFW images if requesting channel is not NSFW
-    txtPosts = []
-    imgPosts = []
-    nsfwimgFound = False
-    nsfwtxtFound = False
-    for post in posts:
-        if post.url[-3:] in usableExt:
-            if nsfwEnable:
-                imgPosts.append(post)
-            else:
-                if not post.over_18:
+        #Create a list of all images, skip NSFW images if requesting channel is not NSFW
+        txtPosts = []
+        imgPosts = []
+        nsfwimgFound = False
+        nsfwtxtFound = False
+        for post in posts:
+            if post.url[-3:] in usableExt:
+                if nsfwEnable:
                     imgPosts.append(post)
                 else:
-                    nsfwimgFound = True
-        else:
-            if post.selftext != "":
-                if nsfwEnable:
-                    txtPosts.append(post)
-                else:
                     if not post.over_18:
+                        imgPosts.append(post)
+                    else:
+                        nsfwimgFound = True
+            else:
+                if post.selftext != "":
+                    if nsfwEnable:
                         txtPosts.append(post)
                     else:
-                        nsfwtxtFound = True
+                        if not post.over_18:
+                            txtPosts.append(post)
+                        else:
+                            nsfwtxtFound = True
 
-    if len(imgPosts) == 0 and nsfwimgFound == True and nsfwEnable == False and postType=="image": #If seeking sfw img and only found nsfw
-      errorList.append("only_nsfw_found")
-    elif len(imgPosts) == 0 and nsfwimgFound == False and postType=="image": #If no images found at all
-        errorList.append("none_found")
-    elif len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="text" or len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="all": #If seeking sfw txt and only found nsfw
-        errorList.append("only_nsfw_found")
-    elif len(txtPosts) == 0 and nsfwtxtFound == False and postType=="text": #If no text found at all
-        errorList.append("none_found")
-    elif len(txtPosts) == 0 and len(imgPosts) == 0 and postType == "all": #If nothing found for all
-        errorList.append("none_found")
-    elif len(imgPosts) == 0 and len(txtPosts) ==0 and nsfwimgFound == True and nsfwEnable == False and postType=="all":
-        errorList.append("only_nsfw_found")
-    elif len(imgPosts) == 0 and len(txtPosts) == 0 and nsfwimgFound == False and postType=="all":
-        errorList.append("none_found")
-    else:
-        if postType == "image":
-            submission = imgPosts[random.randint(0,len(imgPosts)-1)]
-            paramDict["postname"] = submission.title
-            paramDict["posturl"] = submission.permalink
-            paramDict["content"] = submission.url
-            paramDict["subname"] = submission.subreddit.display_name
-            postType = "image"
-        elif postType == "text":
-            submission = txtPosts[random.randint(0,len(txtPosts)-1)]
-            paramDict["postname"] = submission.title
-            paramDict["posturl"] = submission.permalink
-            paramDict["content"] = submission.selftext
-            paramDict["subname"] = submission.subreddit.display_name
-            postType = "text"
-        elif postType == "all":
-            fullList = txtPosts + imgPosts
-            submission = fullList[random.randint(0,len(fullList)-1)]
-            paramDict["postname"] = submission.title
-            paramDict["posturl"] = submission.permalink
-            paramDict["subname"] = submission.subreddit.display_name
-            if submission.url[-3:] in usableExt:
-                postType = "image"
+        if len(imgPosts) == 0 and nsfwimgFound == True and nsfwEnable == False and postType=="image": #If seeking sfw img and only found nsfw
+            errorList.append("only_nsfw_found")
+        elif len(imgPosts) == 0 and nsfwimgFound == False and postType=="image": #If no images found at all
+            errorList.append("none_found")
+        elif len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="text" or len(txtPosts) == 0 and nsfwtxtFound == True and nsfwEnable == False and postType=="all": #If seeking sfw txt and only found nsfw
+            errorList.append("only_nsfw_found")
+        elif len(txtPosts) == 0 and nsfwtxtFound == False and postType=="text": #If no text found at all
+            errorList.append("none_found")
+        elif len(txtPosts) == 0 and len(imgPosts) == 0 and postType == "all": #If nothing found for all
+            errorList.append("none_found")
+        elif len(imgPosts) == 0 and len(txtPosts) ==0 and nsfwimgFound == True and nsfwEnable == False and postType=="all":
+            errorList.append("only_nsfw_found")
+        elif len(imgPosts) == 0 and len(txtPosts) == 0 and nsfwimgFound == False and postType=="all":
+            errorList.append("none_found")
+        else:
+            if postType == "image":
+                submission = imgPosts[random.randint(0,len(imgPosts)-1)]
+                paramDict["postname"] = submission.title
+                paramDict["posturl"] = submission.permalink
                 paramDict["content"] = submission.url
-            else:
-                postType = "text"
+                paramDict["subname"] = submission.subreddit.display_name
+                postType = "image"
+            elif postType == "text":
+                submission = txtPosts[random.randint(0,len(txtPosts)-1)]
+                paramDict["postname"] = submission.title
+                paramDict["posturl"] = submission.permalink
                 paramDict["content"] = submission.selftext
-            
+                paramDict["subname"] = submission.subreddit.display_name
+                postType = "text"
+            elif postType == "all":
+                fullList = txtPosts + imgPosts
+                submission = fullList[random.randint(0,len(fullList)-1)]
+                paramDict["postname"] = submission.title
+                paramDict["posturl"] = submission.permalink
+                paramDict["subname"] = submission.subreddit.display_name
+                if submission.url[-3:] in usableExt:
+                    postType = "image"
+                    paramDict["content"] = submission.url
+                else:
+                    postType = "text"
+                    paramDict["content"] = submission.selftext
 
+        if "none_found" in errorList or "only_nsfw_found" in errorList:
+            embed = await redditEmbedGen.errorEmbed(errorList)
+        elif postType == "image":
+            embed = await redditEmbedGen.imageEmbed(errorList, **paramDict)
+        elif postType == "text":
+            embed = await redditEmbedGen.textEmbed(errorList, **paramDict)
+        return(embed)
+    else:
+        print("notpublic")
+        errorList = ["private_or_quarantined"]    
+        embed = await redditEmbedGen.errorEmbed(errorList)
 
-    print(paramDict)
-
-    if "none_found" in errorList or "only_nsfw_found" in errorList:
-        redditEmbedGen.errorEmbed(errorList)
-    elif postType == "image":
-        embed = await redditEmbedGen.imageEmbed(errorList, **paramDict)
-    elif postType == "text":
-        embed = await redditEmbedGen.textEmbed(errorList, **paramDict)
-        
-    return(embed)
+        return(embed)

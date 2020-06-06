@@ -2,10 +2,14 @@ import discord, praw, textwrap
 
 #Generate embed message for a fatal error such as no content found at all.
 async def errorEmbed(errorList):
+    print("Generating error embed")
     if "none_found" in errorList:
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="No content could be found using the given parameters. Try a different subreddit, increase the range, or try a different type.")
     elif "only_nsfw_found" in errorList:
         embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="Only content marked as NSFW could be found. You may be trying to access an NSFW subreddit in a SFW channel. Either try a SFW subreddit or repeat the command in an NSFW channel.")
+    elif "private_or_quarantined" in errorList:
+        embed = discord.Embed(title=":warning: Error", colour=discord.Colour(0xd00202), description="This subreddit has been Quarantined, Private, or does not exist.")
+    return(embed)
 
 #Generate string of errors when a non fatal error occurs, such as incorrect type or sorting option
 async def embedStatus(errorList):
@@ -34,7 +38,7 @@ async def imageEmbed(errorList, postname="", posturl="", imageurl="", subname=""
         icon = "https://i.imgur.com/dsf46oW.png"
     embed.set_author(name=subname, url=suburl, icon_url=icon)
     if len(errorList) != 0:
-        embed.description = embedStatus(errorList)
+        embed.description = await embedStatus(errorList)
     return(embed)
 
 #Handle embed generation for text posts
@@ -59,5 +63,5 @@ async def textEmbed(errorList, postname="", posturl="", imageurl="", subname="",
         icon = "https://i.imgur.com/dsf46oW.png"
     embed.set_author(name=subname, url=suburl, icon_url=icon)
     if len(errorList) != 0:
-        embed.description = embedStatus(errorList)
+        embed.description = await embedStatus(errorList)
     return(embed)
