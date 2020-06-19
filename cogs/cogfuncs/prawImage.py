@@ -1,6 +1,8 @@
 import praw, random, os
 import cogs.cogfuncs.redditEmbedGen as redditEmbedGen
 
+
+ 
 async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=False):
     #Setup image types, sorting methods, empty dictionary for parameters, and list for errors to be reported
     usableExt=["jpg","peg","png","gif"]
@@ -45,7 +47,7 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
     reddit=praw.Reddit(client_id=os.getenv("prawClientId"), client_secret=os.getenv("prawClientSecret"), user_agent=os.getenv("prawUserAgent"))
 
     #If no subreddit name provided or sub name is invalid, use r/all and return error
-    if subname == None:
+    if subname == "default":
         errorList.append("no_sub_provided")   
         subname = "all" 
     else:

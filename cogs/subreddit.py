@@ -18,6 +18,9 @@ class Subreddit(commands.Cog):
         channeldata = [d for d in data if d['id'] == channel.id][0]
         return channeldata['nsfw']
 
+    # Checks for each parameter in subreddit command. If parameter not specified, set to "default" in optDict. 
+    # If specified but missing or invalid, returns a none value.
+    # This allows for better error handling
     @commands.command(pass_context=True)
     async def subreddit(self, ctx):
         async with ctx.message.channel.typing():
@@ -34,9 +37,9 @@ class Subreddit(commands.Cog):
                 if not commandList[1].startswith("-"):
                     optDict["subname"]=commandList[1]
                 else:
-                    optDict["subname"] = None
+                    optDict["subname"] = "default"
             else:
-                optDict["subname"] = None
+                optDict["subname"] = "default"
             
             #Get parameter: Sort by
             if "-s" in commandList: 
