@@ -6,6 +6,8 @@ verify_ssl = true
 discord = "*"
 praw = "*"
 python-dotenv = "*"
+numpy = "*"
+scikit-image = "*"
 
 [requires]
 python_version = "3.7"

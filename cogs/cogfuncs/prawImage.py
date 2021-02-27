@@ -44,7 +44,7 @@ async def prawImgFind(subname="",sortby="",srange="",postType="",nsfwEnable=Fals
             postType = "all"
     
     #setup reddit api connection
-    reddit=praw.Reddit(client_id=os.getenv("prawClientId"), client_secret=os.getenv("prawClientSecret"), user_agent=os.getenv("prawUserAgent"))
+    reddit=praw.Reddit(client_id=os.getenv("prawClientId"), client_secret=os.getenv("prawClientSecret"), user_agent=os.getenv("prawUserAgent"), check_for_async=False)
 
     #If no subreddit name provided or sub name is invalid, use r/all and return error
     if subname == "default":

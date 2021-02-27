@@ -1,4 +1,5 @@
-import discord, praw, textwrap
+import discord, praw, textwrap, numpy
+from skimage import io
 
 #Generate embed message for a fatal error such as no content found at all.
 async def errorEmbed(errorList):
@@ -26,16 +27,25 @@ async def embedStatus(errorList):
         errorMessage += "`Invalid type chosen. Using default of any.`"
     return(errorMessage)
 
+#Choose a color for the embed based on the subreddits icon
+async def colorGenerator(icon_url):
+    img = io.imread(icon_url)
+    avg_color_per_row = numpy.average(img, axis=0)
+    avg_color = numpy.average(avg_color_per_row, axis=0).tolist()
+    avg_color = [int(x) for x in avg_color][:3]
+    hexcode = int('%02x%02x%02x' % tuple(avg_color), 16)
+    return(hexcode)
+
 #Handle embed generation for image posts
 async def imageEmbed(contDict):
     print("Error: ", contDict["errorlist"])
     fullurl = "http://www.reddit.com" + str(contDict["posturl"])
     suburl = "http://www.reddit.com/r/" + contDict["subname"]
     fullsubname = "r/" + contDict["subname"]
-    embed = discord.Embed(title=contDict["postname"], colour=discord.Colour(0xff4500), url=fullurl)
-    embed.set_image(url=contDict["content"])
     if contDict["icon"] == "":
         contDict["icon"] = "https://i.imgur.com/dsf46oW.png"
+    embed = discord.Embed(title=contDict["postname"], colour=discord.Colour(await colorGenerator(contDict["icon"])), url=fullurl)
+    embed.set_image(url=contDict["content"])
     embed.set_author(name=fullsubname, url=suburl, icon_url=contDict["icon"])
     if len(contDict["errorlist"]) != 0:
         embed.description = await embedStatus(contDict["errorlist"])
@@ -47,7 +57,9 @@ async def textEmbed(contDict):
     fullurl = "http://www.reddit.com" + str(contDict["posturl"])
     suburl = "http://www.reddit.com/r/" + contDict["subname"]
     fullsubname = "r/" + contDict["subname"]
-    embed = discord.Embed(title=contDict["postname"], colour=discord.Colour(0xff4500), url=fullurl)
+    if contDict["icon"] == "":
+        contDict["icon"] = "https://i.imgur.com/dsf46oW.png"
+    embed = discord.Embed(title=contDict["postname"], colour=discord.Colour(await colorGenerator(contDict["icon"])), url=fullurl)
     content = contDict["content"]
     if len(content) > 1000:
         splitList = []
@@ -60,8 +72,6 @@ async def textEmbed(contDict):
             x+=1
     else:
         embed.add_field(name="1 of 1", value=content)
-    if contDict["icon"] == "":
-        contDict["icon"] = "https://i.imgur.com/dsf46oW.png"
     embed.set_author(name=fullsubname, url=suburl, icon_url=contDict["icon"])
     if len(contDict["errorlist"]) != 0:
         embed.description = await embedStatus(contDict["errorlist"])
